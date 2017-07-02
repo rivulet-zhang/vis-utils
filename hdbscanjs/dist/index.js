@@ -1,0 +1,2 @@
+/* global console */
+"use strict";
