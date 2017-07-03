@@ -1,6 +1,6 @@
 {
   "name": "hdbscanjs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Jiawei Zhang",
   "main": "dist/index.js",
   "description": "Hierarchical DBSCAN Clustering in JavaScript",
@@ -35,7 +35,5 @@
   },
   "private": false,
   "license": "MIT",
-  "dependencies": {
-    "lodash": "4.17.4"
-  }
+  "dependencies": {}
 }

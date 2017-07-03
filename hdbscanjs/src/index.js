@@ -1,1 +1,1 @@
-/* global console */
+export default from './hdbscan';

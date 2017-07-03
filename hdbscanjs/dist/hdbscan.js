@@ -22,7 +22,8 @@ var Node = function () {
         index = _ref.index,
         data = _ref.data,
         dist = _ref.dist,
-        parent = _ref.parent;
+        parent = _ref.parent,
+        opt = _ref.opt;
 
     _classCallCheck(this, Node);
 
@@ -33,6 +34,7 @@ var Node = function () {
     this.index = index;
     this.data = data;
     this.dist = dist;
+    this.opt = opt;
 
     this.parent = parent;
   }
@@ -57,7 +59,7 @@ var Node = function () {
     // }
 
     // printTree(tabs) {
-    //   console.log(Array(tabs).fill(' ').join(' '), this.index.join(' '), ' dist:', this.dist);
+    //   console.log(Array(tabs).fill(' ').join(' '), this.index.join(' '), ' dist:', this.dist, ' opt:', this.opt, ' data:', this.data);
     //   if (this.left !== null) {
     //     this.left.printTree(tabs + 1);
     //   }
@@ -72,12 +74,17 @@ var Node = function () {
 }();
 
 var Hdbscan = function () {
-  function Hdbscan(data) {
+  function Hdbscan(dataset) {
     var distFunc = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Hdbscan.distFunc.euclidean;
 
     _classCallCheck(this, Hdbscan);
 
-    this.data = data;
+    this.data = dataset.map(function (val) {
+      return val.data;
+    });
+    this.opt = dataset.map(function (val) {
+      return val.opt;
+    });
     this.distFunc = distFunc;
   }
 
@@ -85,6 +92,7 @@ var Hdbscan = function () {
     key: 'getTree',
     value: function getTree() {
       var data = this.data;
+      var opt = this.opt;
       if (!data || data.length <= 1) {
         throw new Error('Less than two points!');
       }
@@ -93,7 +101,7 @@ var Hdbscan = function () {
       var edges = mst.getMst();
       // console.log(edges);
       var nodes = data.map(function (val, i) {
-        return new Node({ left: null, right: null, index: [i], data: null, dist: null, parent: null });
+        return new Node({ left: null, right: null, index: [i], data: [val], opt: opt[i], dist: null, parent: null });
       });
 
       var root = null;
@@ -105,9 +113,10 @@ var Hdbscan = function () {
 
         var left = nodes[edge[0]].getAncestor();
         var right = nodes[edge[1]].getAncestor();
-        var node = new Node({ left: left, right: right, index: left.index.concat(right.index), data: null, dist: dist, parent: null });
+        var node = new Node({ left: left, right: right, index: left.index.concat(right.index), data: left.data.concat(right.data), opt: left.opt + right.opt, dist: dist, parent: null });
         left.parent = right.parent = root = node;
       });
+      // root.printTree(0);
       return root;
     }
   }]);
