@@ -1,4 +1,4 @@
-# Hierarchical DBSCAN Clustering in JavaScript -- In Progress #
+## Hierarchical DBSCAN Clustering in JavaScript -- In Progress ##
 
 A JavaScript-based and *simplified* version of [hdbscan](https://github.com/scikit-learn-contrib/hdbscan).
 
