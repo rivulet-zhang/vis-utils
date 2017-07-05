@@ -20,7 +20,7 @@ describe('hdbscan', () => {
   before(() => hdbscan = new Hdbscan(data));
   after(() => hdbscan = undefined);
 
-  it('getMst', () => {
+  it('getTree', () => {
     hdbscan.getTree();
     // expect(hdbscan.getTree()).to.have.lengthOf(4);
   });

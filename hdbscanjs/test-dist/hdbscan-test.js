@@ -18,7 +18,7 @@ describe('hdbscan', function () {
     return hdbscan = undefined;
   });
 
-  it('getMst', function () {
+  it('getTree', function () {
     hdbscan.getTree();
     // expect(hdbscan.getTree()).to.have.lengthOf(4);
   });

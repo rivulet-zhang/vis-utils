@@ -1,6 +1,6 @@
 {
   "name": "hdbscanjs",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Jiawei Zhang",
   "main": "dist/index.js",
   "description": "Hierarchical DBSCAN Clustering in JavaScript",
@@ -13,7 +13,7 @@
     "test": "node node_modules/mocha/bin/mocha --reporter spec test-dist/*"
   },
   "keywords": [
-    "hierarchical Clustering",
+    "hierarchical clustering",
     "dbscan",
     "density-based clustering",
     "javascript"

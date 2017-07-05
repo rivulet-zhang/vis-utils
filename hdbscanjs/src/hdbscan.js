@@ -2,7 +2,7 @@
 import Mst from './mst';
 
 class Node {
-  constructor({ left, right, index, data, dist, parent, opt }) {
+  constructor({ left, right, index, data, dist, parent, opt, edge }) {
     this.left = left;
     this.right = right;
     this.isLeaf = left === null && right === null;
@@ -11,29 +11,20 @@ class Node {
     this.data = data;
     this.dist = dist;
     this.opt = opt;
+    this.edge = edge;
 
     this.parent = parent;
   }
 
   getAncestor() {
-    if (this.parent === null) {
+    if (!this.parent) {
       return this;
     }
     return this.parent.getAncestor();
   }
 
-  // removeParentPointerForSubTree() {
-  //   delete this.parent;
-  //   if (this.left !== null) {
-  //     this.left.removeParentPointerForSubTree();
-  //   }
-  //   if (this.right !== null) {
-  //     this.right.removeParentPointerForSubTree();
-  //   }
-  // }
-
   // printTree(tabs) {
-  //   console.log(Array(tabs).fill(' ').join(' '), this.index.join(' '), ' dist:', this.dist, ' opt:', this.opt, ' data:', this.data);
+  //   console.log(Array(tabs).fill(' ').join(' '), this.index.join(' '), ' edge:', this.edge);
   //   if (this.left !== null) {
   //     this.left.printTree(tabs + 1);
   //   }
@@ -60,14 +51,14 @@ export default class Hdbscan {
     const mst = new Mst(this.data, this.distFunc);
     const edges = mst.getMst();
     // console.log(edges);
-    const nodes = data.map((val, i) => new Node({ left: null, right: null, index: [i], data: [val], opt: opt[i], dist: null, parent: null }));
+    const nodes = data.map((val, i) => new Node({ left: null, right: null, index: [i], data: [val], opt: opt[i], dist: null, parent: null, edge: null }));
 
     let root = null;
     edges.sort((val1, val2) => val1.dist - val2.dist).forEach((val) => {
       const { edge, dist } = val;
       const left = nodes[edge[0]].getAncestor();
       const right = nodes[edge[1]].getAncestor();
-      const node = new Node({ left, right, index: left.index.concat(right.index), data: left.data.concat(right.data), opt: left.opt + right.opt, dist, parent: null });
+      const node = new Node({ left, right, index: left.index.concat(right.index), data: left.data.concat(right.data), opt: left.opt + right.opt, dist, parent: null, edge });
       left.parent = right.parent = root = node;
     });
     // root.printTree(0);

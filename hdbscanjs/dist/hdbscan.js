@@ -23,7 +23,8 @@ var Node = function () {
         data = _ref.data,
         dist = _ref.dist,
         parent = _ref.parent,
-        opt = _ref.opt;
+        opt = _ref.opt,
+        edge = _ref.edge;
 
     _classCallCheck(this, Node);
 
@@ -35,6 +36,7 @@ var Node = function () {
     this.data = data;
     this.dist = dist;
     this.opt = opt;
+    this.edge = edge;
 
     this.parent = parent;
   }
@@ -42,24 +44,14 @@ var Node = function () {
   _createClass(Node, [{
     key: 'getAncestor',
     value: function getAncestor() {
-      if (this.parent === null) {
+      if (!this.parent) {
         return this;
       }
       return this.parent.getAncestor();
     }
 
-    // removeParentPointerForSubTree() {
-    //   delete this.parent;
-    //   if (this.left !== null) {
-    //     this.left.removeParentPointerForSubTree();
-    //   }
-    //   if (this.right !== null) {
-    //     this.right.removeParentPointerForSubTree();
-    //   }
-    // }
-
     // printTree(tabs) {
-    //   console.log(Array(tabs).fill(' ').join(' '), this.index.join(' '), ' dist:', this.dist, ' opt:', this.opt, ' data:', this.data);
+    //   console.log(Array(tabs).fill(' ').join(' '), this.index.join(' '), ' edge:', this.edge);
     //   if (this.left !== null) {
     //     this.left.printTree(tabs + 1);
     //   }
@@ -101,7 +93,7 @@ var Hdbscan = function () {
       var edges = mst.getMst();
       // console.log(edges);
       var nodes = data.map(function (val, i) {
-        return new Node({ left: null, right: null, index: [i], data: [val], opt: opt[i], dist: null, parent: null });
+        return new Node({ left: null, right: null, index: [i], data: [val], opt: opt[i], dist: null, parent: null, edge: null });
       });
 
       var root = null;
@@ -113,7 +105,7 @@ var Hdbscan = function () {
 
         var left = nodes[edge[0]].getAncestor();
         var right = nodes[edge[1]].getAncestor();
-        var node = new Node({ left: left, right: right, index: left.index.concat(right.index), data: left.data.concat(right.data), opt: left.opt + right.opt, dist: dist, parent: null });
+        var node = new Node({ left: left, right: right, index: left.index.concat(right.index), data: left.data.concat(right.data), opt: left.opt + right.opt, dist: dist, parent: null, edge: edge });
         left.parent = right.parent = root = node;
       });
       // root.printTree(0);
