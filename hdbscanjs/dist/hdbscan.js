@@ -15,6 +15,21 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function getBoundingBox(arr) {
+  var xs = arr.map(function (val) {
+    return val[0];
+  });
+  var ys = arr.map(function (val) {
+    return val[1];
+  });
+  return {
+    minX: Math.min.apply(null, xs),
+    maxX: Math.max.apply(null, xs),
+    minY: Math.min.apply(null, ys),
+    maxY: Math.max.apply(null, ys)
+  };
+}
+
 var Node = function () {
   function Node(_ref) {
     var left = _ref.left,
@@ -37,6 +52,7 @@ var Node = function () {
     this.dist = dist;
     this.opt = opt;
     this.edge = edge;
+    this.bbox = getBoundingBox(data);
 
     this.parent = parent;
   }
@@ -49,17 +65,17 @@ var Node = function () {
       }
       return this.parent.getAncestor();
     }
-
-    // printTree(tabs) {
-    //   console.log(Array(tabs).fill(' ').join(' '), this.index.join(' '), ' edge:', this.edge);
-    //   if (this.left !== null) {
-    //     this.left.printTree(tabs + 1);
-    //   }
-    //   if (this.right !== null) {
-    //     this.right.printTree(tabs + 1);
-    //   }
-    // }
-
+  }, {
+    key: 'toString',
+    value: function toString(tabs) {
+      console.log(Array(tabs).fill(' ').join(' '), this.index.join(' '), ' bbox:', this.bbox);
+      if (this.left !== null) {
+        this.left.toString(tabs + 1);
+      }
+      if (this.right !== null) {
+        this.right.toString(tabs + 1);
+      }
+    }
   }]);
 
   return Node;
@@ -85,8 +101,12 @@ var Hdbscan = function () {
     value: function getTree() {
       var data = this.data;
       var opt = this.opt;
-      if (!data || data.length <= 1) {
-        throw new Error('Less than two points!');
+      if (!data || !data.length) {
+        throw new Error('invalid data!');
+      }
+
+      if (data.length === 1) {
+        return new Node({ left: null, right: null, index: [0], data: data, opt: opt, dist: null, parent: null, edge: null });
       }
 
       var mst = new _mst2.default(this.data, this.distFunc);

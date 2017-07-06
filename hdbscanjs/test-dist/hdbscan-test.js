@@ -10,6 +10,9 @@ describe('hdbscan', function () {
   var hdbscan = void 0;
   // const data = Array(10).fill(0).map((val, i) => [Math.cos((Math.PI / 5) * i), Math.sin((Math.PI / 5) * i)]);
   var data = [{ data: [0, 0], opt: 1 }, { data: [1, 0], opt: 2 }, { data: [2, 0], opt: 3 }, { data: [3, 0], opt: 4 }, { data: [-2, 0], opt: 5 }, { data: [-10, 0], opt: 6 }];
+  // const data = [
+  //   { data: [0, 0], opt: 1 }
+  // ];
 
   before(function () {
     return hdbscan = new _hdbscan2.default(data);
@@ -19,7 +22,8 @@ describe('hdbscan', function () {
   });
 
   it('getTree', function () {
-    hdbscan.getTree();
+    var tree = hdbscan.getTree();
+    tree.toString(0);
     // expect(hdbscan.getTree()).to.have.lengthOf(4);
   });
 }); /* global it, describe, before, after, console */

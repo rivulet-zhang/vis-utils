@@ -31,6 +31,7 @@ The returned `tree` structure contains the following attributes:
 * `opt`: a user-defined value that is aggregated during the clustering process (currently only support a numeric value, will extend to support an arbitrary object)
 * `dist`: the distance between the two child clusters (`null` if the current node is a leaf)
 * `edge`: the closest pair of points from the two child clusters (`null` if the current node is a leaf)
+* `bbox`: the bounding box of the current cluster (``{minX:.., maxX:.., minY:.., maxY:..}`)
 
 ## License
 

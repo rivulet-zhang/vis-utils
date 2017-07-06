@@ -16,12 +16,16 @@ describe('hdbscan', () => {
     { data: [-2, 0], opt: 5 },
     { data: [-10, 0], opt: 6 }
   ];
+  // const data = [
+  //   { data: [0, 0], opt: 1 }
+  // ];
 
   before(() => hdbscan = new Hdbscan(data));
   after(() => hdbscan = undefined);
 
   it('getTree', () => {
-    hdbscan.getTree();
+    const tree = hdbscan.getTree();
+    tree.toString(0);
     // expect(hdbscan.getTree()).to.have.lengthOf(4);
   });
 });

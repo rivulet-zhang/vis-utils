@@ -1,6 +1,17 @@
 /* eslint-disable max-len */
 import Mst from './mst';
 
+function getBoundingBox(arr) {
+  const xs = arr.map(val => val[0]);
+  const ys = arr.map(val => val[1]);
+  return {
+    minX: Math.min.apply(null, xs),
+    maxX: Math.max.apply(null, xs),
+    minY: Math.min.apply(null, ys),
+    maxY: Math.max.apply(null, ys)
+  };
+}
+
 class Node {
   constructor({ left, right, index, data, dist, parent, opt, edge }) {
     this.left = left;
@@ -12,6 +23,7 @@ class Node {
     this.dist = dist;
     this.opt = opt;
     this.edge = edge;
+    this.bbox = getBoundingBox(data);
 
     this.parent = parent;
   }
@@ -23,15 +35,15 @@ class Node {
     return this.parent.getAncestor();
   }
 
-  // printTree(tabs) {
-  //   console.log(Array(tabs).fill(' ').join(' '), this.index.join(' '), ' edge:', this.edge);
-  //   if (this.left !== null) {
-  //     this.left.printTree(tabs + 1);
-  //   }
-  //   if (this.right !== null) {
-  //     this.right.printTree(tabs + 1);
-  //   }
-  // }
+  toString(tabs) {
+    console.log(Array(tabs).fill(' ').join(' '), this.index.join(' '), ' bbox:', this.bbox);
+    if (this.left !== null) {
+      this.left.toString(tabs + 1);
+    }
+    if (this.right !== null) {
+      this.right.toString(tabs + 1);
+    }
+  }
 }
 
 export default class Hdbscan {
@@ -44,8 +56,12 @@ export default class Hdbscan {
   getTree() {
     const data = this.data;
     const opt = this.opt;
-    if (!data || data.length <= 1) {
-      throw new Error('Less than two points!');
+    if (!data || !data.length) {
+      throw new Error('invalid data!');
+    }
+
+    if (data.length === 1) {
+      return new Node({ left: null, right: null, index: [0], data, opt, dist: null, parent: null, edge: null });
     }
 
     const mst = new Mst(this.data, this.distFunc);
