@@ -35,14 +35,19 @@ class Node {
     return this.parent.getAncestor();
   }
 
-  toString(tabs) {
-    console.log(Array(tabs).fill(' ').join(' '), this.index.join(' '), ' bbox:', this.bbox);
-    if (this.left !== null) {
-      this.left.toString(tabs + 1);
+  toString() {
+    return `${this.index.join(' ')}, bbox:, ${this.bbox}`;
+  }
+
+  // filter from top to bottom, if true, terminate and return the node, othervise, test the children
+  filter(testFunc) {
+    const flag = testFunc(this);
+    if (flag) {
+      return [this];
     }
-    if (this.right !== null) {
-      this.right.toString(tabs + 1);
-    }
+    const l = this.left ? this.left.filter(testFunc) : [];
+    const r = this.right ? this.right.filter(testFunc) : [];
+    return l.concat(r);
   }
 }
 
@@ -66,7 +71,6 @@ export default class Hdbscan {
 
     const mst = new Mst(this.data, this.distFunc);
     const edges = mst.getMst();
-    // console.log(edges);
     const nodes = data.map((val, i) => new Node({ left: null, right: null, index: [i], data: [val], opt: opt[i], dist: null, parent: null, edge: null }));
 
     let root = null;
@@ -77,7 +81,6 @@ export default class Hdbscan {
       const node = new Node({ left, right, index: left.index.concat(right.index), data: left.data.concat(right.data), opt: left.opt + right.opt, dist, parent: null, edge });
       left.parent = right.parent = root = node;
     });
-    // root.printTree(0);
     return root;
   }
 

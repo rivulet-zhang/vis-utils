@@ -22,9 +22,13 @@ describe('hdbscan', function () {
   });
 
   it('getTree', function () {
-    var tree = hdbscan.getTree();
-    tree.toString(0);
-    // expect(hdbscan.getTree()).to.have.lengthOf(4);
+    var root = hdbscan.getTree();
+    var filtered = root.filter(function (x) {
+      return x.index.length === 1;
+    });
+    filtered.forEach(function (x) {
+      return console.log(x.toString());
+    });
   });
 }); /* global it, describe, before, after, console */
 /* eslint-disable max-len */

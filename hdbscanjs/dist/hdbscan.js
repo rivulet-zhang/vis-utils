@@ -67,14 +67,22 @@ var Node = function () {
     }
   }, {
     key: 'toString',
-    value: function toString(tabs) {
-      console.log(Array(tabs).fill(' ').join(' '), this.index.join(' '), ' bbox:', this.bbox);
-      if (this.left !== null) {
-        this.left.toString(tabs + 1);
+    value: function toString() {
+      return this.index.join(' ') + ', bbox:, ' + this.bbox;
+    }
+
+    // filter from top to bottom, if true, terminate and return the node, othervise, test the children
+
+  }, {
+    key: 'filter',
+    value: function filter(testFunc) {
+      var flag = testFunc(this);
+      if (flag) {
+        return [this];
       }
-      if (this.right !== null) {
-        this.right.toString(tabs + 1);
-      }
+      var l = this.left ? this.left.filter(testFunc) : [];
+      var r = this.right ? this.right.filter(testFunc) : [];
+      return l.concat(r);
     }
   }]);
 
@@ -111,7 +119,6 @@ var Hdbscan = function () {
 
       var mst = new _mst2.default(this.data, this.distFunc);
       var edges = mst.getMst();
-      // console.log(edges);
       var nodes = data.map(function (val, i) {
         return new Node({ left: null, right: null, index: [i], data: [val], opt: opt[i], dist: null, parent: null, edge: null });
       });
@@ -128,7 +135,6 @@ var Hdbscan = function () {
         var node = new Node({ left: left, right: right, index: left.index.concat(right.index), data: left.data.concat(right.data), opt: left.opt + right.opt, dist: dist, parent: null, edge: edge });
         left.parent = right.parent = root = node;
       });
-      // root.printTree(0);
       return root;
     }
   }]);

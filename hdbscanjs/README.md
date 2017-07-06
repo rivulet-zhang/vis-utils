@@ -19,10 +19,13 @@ const dataset = [
 ];
 
 const cluster = new Clustering(dataset);
-const tree = cluster.getTree();
+const treeNode = cluster.getTree();
+
+const testFunc = val => ...;
+const filteredNodes = treeNode.filter(testFunc);
 ```
 
-The returned `tree` structure contains the following attributes:
+The returned `treeNode` object contains the following attributes:
 
 * `left`: a pointer to the left child.
 * `right`: a pointer to the right child.
@@ -32,6 +35,8 @@ The returned `tree` structure contains the following attributes:
 * `dist`: the distance between the two child clusters (`null` if the current node is a leaf)
 * `edge`: the closest pair of points from the two child clusters (`null` if the current node is a leaf)
 * `bbox`: the bounding box of the current cluster (`{minX:.., maxX:.., minY:.., maxY:..}`)
+
+The `treeNode` object contains a `filter` function that performs a top-down recursive filtering operation. If `true`, the test terminates and the current node is returned. Otherwise, the child nodes are tested. The return value of the `filter` function is a flag list of `treeNode`. The `filter` function is useful for *trimming* the cluster nodes based on certain conditions (e.g., current viewport).
 
 ## License
 

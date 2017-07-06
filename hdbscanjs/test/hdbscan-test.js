@@ -24,8 +24,8 @@ describe('hdbscan', () => {
   after(() => hdbscan = undefined);
 
   it('getTree', () => {
-    const tree = hdbscan.getTree();
-    tree.toString(0);
-    // expect(hdbscan.getTree()).to.have.lengthOf(4);
+    const root = hdbscan.getTree();
+    const filtered = root.filter(x => x.index.length === 1);
+    filtered.forEach(x => console.log(x.toString()));
   });
 });
