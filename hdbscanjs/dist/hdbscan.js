@@ -11,30 +11,18 @@ var _mst = require('./mst');
 
 var _mst2 = _interopRequireDefault(_mst);
 
+var _bbox = require('./bbox');
+
+var _bbox2 = _interopRequireDefault(_bbox);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function getBoundingBox(arr) {
-  var xs = arr.map(function (val) {
-    return val[0];
-  });
-  var ys = arr.map(function (val) {
-    return val[1];
-  });
-  return {
-    minX: Math.min.apply(null, xs),
-    maxX: Math.max.apply(null, xs),
-    minY: Math.min.apply(null, ys),
-    maxY: Math.max.apply(null, ys)
-  };
-}
 
 var Node = function () {
   function Node(_ref) {
     var left = _ref.left,
         right = _ref.right,
-        index = _ref.index,
         data = _ref.data,
         dist = _ref.dist,
         parent = _ref.parent,
@@ -45,14 +33,12 @@ var Node = function () {
 
     this.left = left;
     this.right = right;
-    this.isLeaf = left === null && right === null;
 
-    this.index = index;
     this.data = data;
     this.dist = dist;
     this.opt = opt;
     this.edge = edge;
-    this.bbox = getBoundingBox(data);
+    this.bbox = new _bbox2.default(data);
 
     this.parent = parent;
   }
@@ -68,21 +54,30 @@ var Node = function () {
   }, {
     key: 'toString',
     value: function toString() {
-      return this.index.join(' ') + ', bbox:, ' + this.bbox;
+      return 'data: ' + this.data.join(' ') + ', edge:, ' + (this.edge ? this.edge.join(' ') : ' ');
     }
 
     // filter from top to bottom, if true, terminate and return the node, othervise, test the children
 
   }, {
     key: 'filter',
-    value: function filter(testFunc) {
-      var flag = testFunc(this);
+    value: function filter(filterFunc) {
+      var bbox = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+      if (bbox !== null && !this.bbox.intersect(bbox)) return [];
+
+      var flag = filterFunc(this);
       if (flag) {
         return [this];
       }
-      var l = this.left ? this.left.filter(testFunc) : [];
-      var r = this.right ? this.right.filter(testFunc) : [];
+      var l = this.left ? this.left.filter(filterFunc, bbox) : [];
+      var r = this.right ? this.right.filter(filterFunc, bbox) : [];
       return l.concat(r);
+    }
+  }, {
+    key: 'isLeaf',
+    get: function get() {
+      return this.left === null && this.right === null;
     }
   }]);
 
@@ -114,13 +109,13 @@ var Hdbscan = function () {
       }
 
       if (data.length === 1) {
-        return new Node({ left: null, right: null, index: [0], data: data, opt: opt, dist: null, parent: null, edge: null });
+        return new Node({ left: null, right: null, data: data, opt: opt, dist: null, parent: null, edge: null });
       }
 
       var mst = new _mst2.default(this.data, this.distFunc);
       var edges = mst.getMst();
       var nodes = data.map(function (val, i) {
-        return new Node({ left: null, right: null, index: [i], data: [val], opt: opt[i], dist: null, parent: null, edge: null });
+        return new Node({ left: null, right: null, data: [val], opt: [opt[i]], dist: null, parent: null, edge: null });
       });
 
       var root = null;
@@ -132,7 +127,7 @@ var Hdbscan = function () {
 
         var left = nodes[edge[0]].getAncestor();
         var right = nodes[edge[1]].getAncestor();
-        var node = new Node({ left: left, right: right, index: left.index.concat(right.index), data: left.data.concat(right.data), opt: left.opt + right.opt, dist: dist, parent: null, edge: edge });
+        var node = new Node({ left: left, right: right, data: left.data.concat(right.data), opt: left.opt.concat(right.opt), dist: dist, parent: null, edge: [data[edge[0]], data[edge[1]]] });
         left.parent = right.parent = root = node;
       });
       return root;

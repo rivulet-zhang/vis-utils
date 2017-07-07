@@ -1,31 +1,23 @@
 /* eslint-disable max-len */
 import Mst from './mst';
-
-function getBoundingBox(arr) {
-  const xs = arr.map(val => val[0]);
-  const ys = arr.map(val => val[1]);
-  return {
-    minX: Math.min.apply(null, xs),
-    maxX: Math.max.apply(null, xs),
-    minY: Math.min.apply(null, ys),
-    maxY: Math.max.apply(null, ys)
-  };
-}
+import Bbox from './bbox';
 
 class Node {
-  constructor({ left, right, index, data, dist, parent, opt, edge }) {
+  constructor({ left, right, data, dist, parent, opt, edge }) {
     this.left = left;
     this.right = right;
-    this.isLeaf = left === null && right === null;
 
-    this.index = index;
     this.data = data;
     this.dist = dist;
     this.opt = opt;
     this.edge = edge;
-    this.bbox = getBoundingBox(data);
+    this.bbox = new Bbox(data);
 
     this.parent = parent;
+  }
+
+  get isLeaf() {
+    return this.left === null && this.right === null;
   }
 
   getAncestor() {
@@ -36,17 +28,20 @@ class Node {
   }
 
   toString() {
-    return `${this.index.join(' ')}, bbox:, ${this.bbox}`;
+    return `data: ${this.data.join(' ')}, edge:, ${this.edge ? this.edge.join(' ') : ' '}`;
   }
 
   // filter from top to bottom, if true, terminate and return the node, othervise, test the children
-  filter(testFunc) {
-    const flag = testFunc(this);
+  filter(filterFunc, bbox = null) {
+    if(bbox !== null && !this.bbox.intersect(bbox))
+      return [];
+
+    const flag = filterFunc(this);
     if (flag) {
       return [this];
     }
-    const l = this.left ? this.left.filter(testFunc) : [];
-    const r = this.right ? this.right.filter(testFunc) : [];
+    const l = this.left ? this.left.filter(filterFunc, bbox) : [];
+    const r = this.right ? this.right.filter(filterFunc, bbox) : [];
     return l.concat(r);
   }
 }
@@ -66,19 +61,19 @@ export default class Hdbscan {
     }
 
     if (data.length === 1) {
-      return new Node({ left: null, right: null, index: [0], data, opt, dist: null, parent: null, edge: null });
+      return new Node({ left: null, right: null, data, opt, dist: null, parent: null, edge: null });
     }
 
     const mst = new Mst(this.data, this.distFunc);
     const edges = mst.getMst();
-    const nodes = data.map((val, i) => new Node({ left: null, right: null, index: [i], data: [val], opt: opt[i], dist: null, parent: null, edge: null }));
+    const nodes = data.map((val, i) => new Node({ left: null, right: null, data: [val], opt: [opt[i]], dist: null, parent: null, edge: null }));
 
     let root = null;
     edges.sort((val1, val2) => val1.dist - val2.dist).forEach((val) => {
       const { edge, dist } = val;
       const left = nodes[edge[0]].getAncestor();
       const right = nodes[edge[1]].getAncestor();
-      const node = new Node({ left, right, index: left.index.concat(right.index), data: left.data.concat(right.data), opt: left.opt + right.opt, dist, parent: null, edge });
+      const node = new Node({ left, right, data: left.data.concat(right.data), opt: left.opt.concat(right.opt), dist, parent: null, edge: [data[edge[0]], data[edge[1]]] });
       left.parent = right.parent = root = node;
     });
     return root;

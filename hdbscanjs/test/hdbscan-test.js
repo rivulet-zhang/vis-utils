@@ -25,7 +25,7 @@ describe('hdbscan', () => {
 
   it('getTree', () => {
     const root = hdbscan.getTree();
-    const filtered = root.filter(x => x.index.length === 1);
+    const filtered = root.filter(val => val.data.length < 4, {minX:-10, maxX:-1, minY:-10, maxY:10});
     filtered.forEach(x => console.log(x.toString()));
   });
 });

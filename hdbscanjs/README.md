@@ -21,8 +21,9 @@ const dataset = [
 const cluster = new Clustering(dataset);
 const treeNode = cluster.getTree();
 
-const testFunc = val => ...;
-const filteredNodes = treeNode.filter(testFunc);
+const filterFunc = val => ...;
+const bbox = {minX:.., maxX:.., minY:.., maxY:..};
+const filteredNodes = treeNode.filter(filterFunc, bbox);
 ```
 
 The returned `treeNode` object contains the following attributes:
@@ -31,12 +32,14 @@ The returned `treeNode` object contains the following attributes:
 * `right`: a pointer to the right child.
 * `data`: a list of points in the current cluster
 * `index`: a list of indices corresponding to the points in the current cluster
-* `opt`: a user-defined value that is aggregated during the clustering process (currently only support a numeric value, will extend to support an arbitrary object)
+* `opt`: a user-defined object that is aggregated (combined as a list using `concat`) during the clustering process
 * `dist`: the distance between the two child clusters (`null` if the current node is a leaf)
-* `edge`: the closest pair of points from the two child clusters (`null` if the current node is a leaf)
+* `edge`: the closest pair of points from the two child clusters: `[[p1x, p1y], [p2x, p2y]]` (`null` if the current node is a leaf)
 * `bbox`: the bounding box of the current cluster (`{minX:.., maxX:.., minY:.., maxY:..}`)
 
 The `treeNode` object contains a `filter` function that performs a top-down recursive filtering operation. If `true`, the test terminates and the current node is returned. Otherwise, the child nodes are tested. The return value of the `filter` function is a flag list of `treeNode`. The `filter` function is useful for *trimming* the cluster nodes based on certain conditions (e.g., current viewport).
+
+The `filter` function takes an optional parameter called `bbox`, which defines a bounding box. If not `null`, only the nodes that intersect with the `bbox` will be returned.
 
 ## License
 

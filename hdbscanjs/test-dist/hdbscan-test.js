@@ -23,9 +23,9 @@ describe('hdbscan', function () {
 
   it('getTree', function () {
     var root = hdbscan.getTree();
-    var filtered = root.filter(function (x) {
-      return x.index.length === 1;
-    });
+    var filtered = root.filter(function (val) {
+      return val.data.length < 4;
+    }, { minX: -10, maxX: -1, minY: -10, maxY: 10 });
     filtered.forEach(function (x) {
       return console.log(x.toString());
     });
