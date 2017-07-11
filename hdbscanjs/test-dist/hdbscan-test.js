@@ -8,17 +8,27 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 describe('hdbscan', function () {
   var hdbscan = void 0;
-  // const data = Array(10).fill(0).map((val, i) => [Math.cos((Math.PI / 5) * i), Math.sin((Math.PI / 5) * i)]);
-  var data = [{ data: [0, 0], opt: 1 }, { data: [1, 0], opt: 2 }, { data: [2, 0], opt: 3 }, { data: [3, 0], opt: 4 }, { data: [-2, 0], opt: 5 }, { data: [-10, 0], opt: 6 }];
+  var data = Array(10).fill(0).map(function (val, i) {
+    return {
+      data: [Math.cos(Math.PI / 5 * i), Math.sin(Math.PI / 5 * i)],
+      opt: Math.random()
+    };
+  });
   // const data = [
-  //   { data: [0, 0], opt: 1 }
+  //   {data: [0, 0], opt: 1},
+  //   {data: [1, 0], opt: 2},
+  //   {data: [2, 0], opt: 3},
+  //   {data: [3, 0], opt: 4},
+  //   {data: [-2, 0], opt: 5},
+  //   {data: [-10, 0], opt: 6}
   // ];
 
   before(function () {
-    return hdbscan = new _hdbscan2.default(data);
+    hdbscan = new _hdbscan2.default(data);
   });
+
   after(function () {
-    return hdbscan = undefined;
+    hdbscan = undefined;
   });
 
   it('getTree', function () {
@@ -32,6 +42,6 @@ describe('hdbscan', function () {
   });
 }); /* global it, describe, before, after, console */
 /* eslint-disable max-len */
+/* eslint no-console: ["error", { allow: ["log", "warn", "error"] }] */
 /* eslint import/no-extraneous-dependencies: ["error", {"devDependencies": true}] */
-
 // import { expect } from 'chai';

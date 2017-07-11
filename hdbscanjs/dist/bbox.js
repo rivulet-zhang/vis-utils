@@ -27,13 +27,6 @@ var Bbox = function () {
 
   _createClass(Bbox, [{
     key: "intersect",
-
-
-    // interset(bbox) {
-    //   return Math.abs(this.center[0] - bbox.center[0]) < (this.width + bbox.width) * 0.5 &&
-    //     Math.abs(this.center[1] - bbox.center[1]) < (this.height + bbox.height) * 0.5;
-    // }
-
     value: function intersect(_ref) {
       var minX = _ref.minX,
           maxX = _ref.maxX,
@@ -46,12 +39,12 @@ var Bbox = function () {
   }, {
     key: "width",
     get: function get() {
-      return Math.abs(this.maxX - this.minX);
+      return this.maxX - this.minX;
     }
   }, {
     key: "height",
     get: function get() {
-      return Math.abs(this.maxY - this.minY);
+      return this.maxY - this.minY;
     }
   }, {
     key: "center",

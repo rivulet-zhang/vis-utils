@@ -11,78 +11,13 @@ var _mst = require('./mst');
 
 var _mst2 = _interopRequireDefault(_mst);
 
-var _bbox = require('./bbox');
+var _node = require('./node');
 
-var _bbox2 = _interopRequireDefault(_bbox);
+var _node2 = _interopRequireDefault(_node);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Node = function () {
-  function Node(_ref) {
-    var left = _ref.left,
-        right = _ref.right,
-        data = _ref.data,
-        dist = _ref.dist,
-        parent = _ref.parent,
-        opt = _ref.opt,
-        edge = _ref.edge;
-
-    _classCallCheck(this, Node);
-
-    this.left = left;
-    this.right = right;
-
-    this.data = data;
-    this.dist = dist;
-    this.opt = opt;
-    this.edge = edge;
-    this.bbox = new _bbox2.default(data);
-
-    this.parent = parent;
-  }
-
-  _createClass(Node, [{
-    key: 'getAncestor',
-    value: function getAncestor() {
-      if (!this.parent) {
-        return this;
-      }
-      return this.parent.getAncestor();
-    }
-  }, {
-    key: 'toString',
-    value: function toString() {
-      return 'data: ' + this.data.join(' ') + ', edge:, ' + (this.edge ? this.edge.join(' ') : ' ');
-    }
-
-    // filter from top to bottom, if true, terminate and return the node, othervise, test the children
-
-  }, {
-    key: 'filter',
-    value: function filter(filterFunc) {
-      var bbox = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-      if (bbox !== null && !this.bbox.intersect(bbox)) return [];
-
-      var flag = filterFunc(this);
-      if (flag) {
-        return [this];
-      }
-      var l = this.left ? this.left.filter(filterFunc, bbox) : [];
-      var r = this.right ? this.right.filter(filterFunc, bbox) : [];
-      return l.concat(r);
-    }
-  }, {
-    key: 'isLeaf',
-    get: function get() {
-      return this.left === null && this.right === null;
-    }
-  }]);
-
-  return Node;
-}();
 
 var Hdbscan = function () {
   function Hdbscan(dataset) {
@@ -109,13 +44,28 @@ var Hdbscan = function () {
       }
 
       if (data.length === 1) {
-        return new Node({ left: null, right: null, data: data, opt: opt, dist: null, parent: null, edge: null });
+        return new _node2.default({
+          left: null,
+          right: null,
+          data: data, opt: opt,
+          dist: null,
+          parent: null,
+          edge: null
+        });
       }
 
       var mst = new _mst2.default(this.data, this.distFunc);
       var edges = mst.getMst();
       var nodes = data.map(function (val, i) {
-        return new Node({ left: null, right: null, data: [val], opt: [opt[i]], dist: null, parent: null, edge: null });
+        return new _node2.default({
+          left: null,
+          right: null,
+          data: [val],
+          opt: [opt[i]],
+          dist: null,
+          parent: null,
+          edge: null
+        });
       });
 
       var root = null;
@@ -127,7 +77,16 @@ var Hdbscan = function () {
 
         var left = nodes[edge[0]].getAncestor();
         var right = nodes[edge[1]].getAncestor();
-        var node = new Node({ left: left, right: right, data: left.data.concat(right.data), opt: left.opt.concat(right.opt), dist: dist, parent: null, edge: [data[edge[0]], data[edge[1]]] });
+        var node = new _node2.default({
+          left: left,
+          right: right,
+          data: left.data.concat(right.data),
+          opt: left.opt.concat(right.opt),
+          dist: dist,
+          parent: null,
+          edge: [data[edge[0]], data[edge[1]]]
+        });
+
         left.parent = right.parent = root = node;
       });
       return root;

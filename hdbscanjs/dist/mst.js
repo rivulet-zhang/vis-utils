@@ -9,7 +9,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /* eslint-disable max-len */
-
 var Mst = function () {
   function Mst(data, distFunc) {
     _classCallCheck(this, Mst);
@@ -28,7 +27,9 @@ var Mst = function () {
     value: function precomputeDist() {
       for (var i = 0; i < this.data.length; i += 1) {
         for (var j = 0; j <= i; j += 1) {
-          if (this.cachedDist.length <= i) this.cachedDist.push([]);
+          if (this.cachedDist.length <= i) {
+            this.cachedDist.push([]);
+          }
           this.cachedDist[i][j] = this.distFunc(this.data[i], this.data[j]);
         }
       }
@@ -58,7 +59,10 @@ var Mst = function () {
       var _loop = function _loop(i) {
         var minIndex = i === 0 ? 0 : Mst.findMinIndex(distance, pointRemained);
         pointRemained.delete(minIndex);
-        edges.push({ edge: [minIndex, parent[minIndex]], dist: distance[minIndex] });
+        edges.push({
+          edge: [minIndex, parent[minIndex]],
+          dist: distance[minIndex]
+        });
 
         pointRemained.forEach(function (val) {
           var d = _this.distFunc(data[minIndex], data[val]);
