@@ -65,8 +65,10 @@ export default class Hdbscan {
 Hdbscan.distFunc = {
   euclidean: (p1, p2) => {
     let sum = 0;
-    const len = p1.length;
-    for (let i = 0; i < len; i += 1) {
+    if (p1.length !== p2.length) {
+      throw new Error('unequal dimension in input data');
+    }
+    for (let i = 0; i < p1.length; i += 1) {
       sum += Math.pow(p1[i] - p2[i], 2);
     }
     return Math.sqrt(sum);
