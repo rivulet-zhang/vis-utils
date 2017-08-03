@@ -18,7 +18,12 @@ const dataset = [
   ....
 ];
 
-const cluster = new Clustering(dataset);
+// two distance measure functions are supported:
+// 1) euclidean
+// 2) geoDist (take inputs as lonlat points)
+const distFunc = Clustering.distFunc.geoDist;
+
+const cluster = new Clustering(dataset, distFunc);
 const treeNode = cluster.getTree();
 
 const filterFunc = val => ...;
