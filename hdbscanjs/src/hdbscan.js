@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 import Mst from './mst';
 import Node from './node';
+import geolib from 'geolib';
 
 export default class Hdbscan {
   constructor(dataset, distFunc = Hdbscan.distFunc.euclidean) {
@@ -72,5 +73,10 @@ Hdbscan.distFunc = {
       sum += Math.pow(p1[i] - p2[i], 2);
     }
     return Math.sqrt(sum);
+  },
+  geoDist: (p1, p2) => {
+    const gp1 = {longitude: p1[0], latitude: p1[1]};
+    const gp2 = {longitude: p2[0], latitude: p2[1]};
+    return geolib.getDistance(gp1, gp2);
   }
 };

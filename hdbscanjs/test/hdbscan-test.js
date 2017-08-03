@@ -1,14 +1,14 @@
 /* global it, describe, before, after, console */
 /* eslint-disable max-len */
 /* eslint no-console: ["error", { allow: ["log", "warn", "error"] }] */
-/* eslint import/no-extraneous-dependencies: ["error", {"devDependencies": true}] */
 // import { expect } from 'chai';
 import Hdbscan from '../dist/hdbscan';
 
 describe('hdbscan', () => {
   let hdbscan;
   const data = Array(10).fill(0).map((val, i) => ({
-    data: [Math.cos((Math.PI / 5) * i), Math.sin((Math.PI / 5) * i)],
+    // data: [Math.cos((Math.PI / 5) * i), Math.sin((Math.PI / 5) * i)],
+    data: [Math.random() * 360 - 180, Math.random() * 180 - 90],
     opt: Math.random()
   }));
   // const data = [
@@ -21,7 +21,7 @@ describe('hdbscan', () => {
   // ];
 
   before(() => {
-    hdbscan = new Hdbscan(data);
+    hdbscan = new Hdbscan(data, Hdbscan.distFunc.geoDist);
   });
 
   after(() => {
@@ -30,7 +30,7 @@ describe('hdbscan', () => {
 
   it('getTree', () => {
     const root = hdbscan.getTree();
-    const filtered = root.filter(val => val.data.length < 4, {minX: -10, maxX: -1, minY: -10, maxY: 10});
+    const filtered = root.filter(val => val.data.length === 2, {minX: -180, maxX: 180, minY: -90, maxY: 90});
     filtered.forEach(x => console.log(x.toString()));
   });
 });

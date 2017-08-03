@@ -15,6 +15,10 @@ var _node = require('./node');
 
 var _node2 = _interopRequireDefault(_node);
 
+var _geolib = require('geolib');
+
+var _geolib2 = _interopRequireDefault(_geolib);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -102,10 +106,18 @@ exports.default = Hdbscan;
 Hdbscan.distFunc = {
   euclidean: function euclidean(p1, p2) {
     var sum = 0;
-    var len = p1.length;
-    for (var i = 0; i < len; i += 1) {
+    if (p1.length !== p2.length) {
+      throw new Error('unequal dimension in input data');
+    }
+    for (var i = 0; i < p1.length; i += 1) {
       sum += Math.pow(p1[i] - p2[i], 2);
     }
     return Math.sqrt(sum);
+  },
+  geoDist: function geoDist(p1, p2) {
+    var gp1 = { longitude: p1[0], latitude: p1[1] };
+    var gp2 = { longitude: p2[0], latitude: p2[1] };
+    console.log(gp1, gp2, _geolib2.default.getDistance(gp1, gp2));
+    return _geolib2.default.getDistance(gp1, gp2);
   }
 };
