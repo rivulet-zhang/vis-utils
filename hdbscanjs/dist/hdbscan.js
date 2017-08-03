@@ -117,7 +117,6 @@ Hdbscan.distFunc = {
   geoDist: function geoDist(p1, p2) {
     var gp1 = { longitude: p1[0], latitude: p1[1] };
     var gp2 = { longitude: p2[0], latitude: p2[1] };
-    console.log(gp1, gp2, _geolib2.default.getDistance(gp1, gp2));
     return _geolib2.default.getDistance(gp1, gp2);
   }
 };
